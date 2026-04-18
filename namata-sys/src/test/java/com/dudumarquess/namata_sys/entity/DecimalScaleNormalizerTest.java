@@ -39,6 +39,7 @@ class DecimalScaleNormalizerTest {
         entry.setMultibancoAmount(new BigDecimal("20.333"));
         entry.setAppsGrossAmount(new BigDecimal("30.999"));
         entry.setAppFeePercentageUsed(new BigDecimal("2.345"));
+        entry.setOtherIncomeAmount(new BigDecimal("5.678"));
 
         entry.calculateOfficialAmount();
         entry.calculateRealAmount();
@@ -47,8 +48,9 @@ class DecimalScaleNormalizerTest {
         assertEquals("20.33", entry.getMultibancoAmount().toPlainString());
         assertEquals("31.00", entry.getAppsGrossAmount().toPlainString());
         assertEquals("2.35", entry.getAppFeePercentageUsed().toPlainString());
-        assertEquals("61.34", entry.getOfficialAmount().toPlainString());
-        assertEquals("60.61", entry.getRealAmount().toPlainString());
+        assertEquals("67.02", entry.getOfficialAmount().toPlainString());
+        assertEquals("5.68", entry.getOtherIncomeAmount().toPlainString());
+        assertEquals("66.29", entry.getRealAmount().toPlainString());
         assertEquals(2, entry.getOfficialAmount().scale());
         assertEquals(2, entry.getRealAmount().scale());
     }

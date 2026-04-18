@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.request.CreateFixedExpenseTemplateRequest;
 import com.dudumarquess.namata_sys.dto.request.UpdateFixedExpenseTemplateRequest;
 import com.dudumarquess.namata_sys.dto.response.FixedExpenseTemplateListResponse;
@@ -26,23 +28,30 @@ public class FixedExpenseTemplateController {
     }
 
     @PostMapping
-    public ResponseEntity<FixedExpenseTemplateResponse> create(
+    public ResponseEntity<ApiResponse<FixedExpenseTemplateResponse>> create(
             @Valid @RequestBody CreateFixedExpenseTemplateRequest request
     ) {
-        return ResponseEntity.ok(fixedExpenseTemplateService.create(request));
+        return toResponse(fixedExpenseTemplateService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FixedExpenseTemplateResponse> update(
+    public ResponseEntity<ApiResponse<FixedExpenseTemplateResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateFixedExpenseTemplateRequest request
     ) {
-        return ResponseEntity.ok(fixedExpenseTemplateService.update(id, request));
+        return toResponse(fixedExpenseTemplateService.update(id, request));
     }
 
     @GetMapping
-    public ResponseEntity<FixedExpenseTemplateListResponse> getAll() {
-        return ResponseEntity.ok(fixedExpenseTemplateService.getAll());
+    public ResponseEntity<ApiResponse<FixedExpenseTemplateListResponse>> getAll() {
+        return toResponse(fixedExpenseTemplateService.getAll());
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+        ApiResponse<T> response = result.success()
+                ? ApiResponse.success(result.message(), result.data())
+                : ApiResponse.failure(result.message(), result.errors());
+        return ResponseEntity.status(result.statusCode()).body(response);
     }
 }
 

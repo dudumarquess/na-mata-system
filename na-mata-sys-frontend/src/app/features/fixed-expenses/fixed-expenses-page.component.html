@@ -1,0 +1,79 @@
+<section class="fixed-expenses-page page-animation">
+  <app-card title="Gastos fixos" subtitle="Defina lançamentos recorrentes para não repetir trabalho.">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+      <div class="form-field">
+        <label for="templateName">Nome</label>
+        <input id="templateName" type="text" formControlName="name" maxlength="100" placeholder="Ex.: Renda" />
+        <app-field-errors [control]="form.controls.name" [backendError]="backendFieldErrors()['name']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="templateAmount">Valor padrão (€)</label>
+        <input id="templateAmount" type="number" inputmode="decimal" min="0" step="0.01" formControlName="defaultAmount" />
+        <app-field-errors
+          [control]="form.controls.defaultAmount"
+          [backendError]="backendFieldErrors()['defaultAmount']"
+        ></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="templateDay">Dia padrão</label>
+        <input id="templateDay" type="number" inputmode="numeric" min="1" max="31" formControlName="defaultDay" />
+        <app-field-errors
+          [control]="form.controls.defaultDay"
+          [backendError]="backendFieldErrors()['defaultDay']"
+        ></app-field-errors>
+      </div>
+
+      <label class="toggle-row" for="templateActive">
+        <input id="templateActive" type="checkbox" formControlName="active" />
+        <span>Ativo</span>
+      </label>
+
+      <label class="toggle-row" for="templateAutoLaunch">
+        <input id="templateAutoLaunch" type="checkbox" formControlName="autoLaunchEnabled" />
+        <span>Lançar automaticamente no mês</span>
+      </label>
+
+      @if (generalError()) {
+        <app-alert type="erro" [text]="generalError() || ''"></app-alert>
+      }
+
+      <div class="actions-row">
+        <button type="submit" class="btn primary full" [disabled]="saving()">
+          {{ saving() ? 'A guardar...' : editingId() ? 'Atualizar' : 'Guardar' }}
+        </button>
+        @if (editingId()) {
+          <button type="button" class="btn secondary full" (click)="limpar()">Voltar</button>
+        }
+      </div>
+    </form>
+  </app-card>
+
+  <app-card title="Modelos criados">
+    @if (loading()) {
+      <app-loading text="A carregar gastos fixos..."></app-loading>
+    } @else if (!sortedTemplates().length) {
+      <app-empty-state
+        title="Ainda sem gastos fixos"
+        message="Crie um modelo para lançar gastos recorrentes mais rápido."
+      ></app-empty-state>
+    } @else {
+      <section class="template-list">
+        @for (template of sortedTemplates(); track template.id) {
+          <article class="template-item">
+            <div>
+              <p class="template-name">{{ template.name }}</p>
+              <p class="template-meta">Dia {{ template.defaultDay }} • {{ statusLabel(template) }}</p>
+              <p class="template-meta">{{ template.autoLaunchEnabled ? 'Lançamento automático ligado' : 'Lançamento automático desligado' }}</p>
+            </div>
+            <div class="template-side">
+              <strong>{{ template.defaultAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+              <button type="button" class="btn secondary" (click)="editar(template)">Editar</button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+  </app-card>
+</section>

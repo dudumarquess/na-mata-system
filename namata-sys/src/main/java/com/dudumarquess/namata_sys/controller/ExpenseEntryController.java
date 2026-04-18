@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.request.CreateExpenseEntryRequest;
 import com.dudumarquess.namata_sys.dto.request.UpdateExpenseEntryRequest;
 import com.dudumarquess.namata_sys.dto.response.ExpenseEntryResponse;
@@ -28,31 +30,36 @@ public class ExpenseEntryController {
     }
 
     @PostMapping
-    public ResponseEntity<ExpenseEntryResponse> create(@RequestBody CreateExpenseEntryRequest request) {
-        
-        return ResponseEntity.ok(expenseEntryService.create(request));
+    public ResponseEntity<ApiResponse<ExpenseEntryResponse>> create(@Valid @RequestBody CreateExpenseEntryRequest request) {
+        return toResponse(expenseEntryService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ExpenseEntryResponse> update(
+    public ResponseEntity<ApiResponse<ExpenseEntryResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateExpenseEntryRequest request
     ) {
-        return ResponseEntity.ok(expenseEntryService.update(id, request));
+        return toResponse(expenseEntryService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        expenseEntryService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        return toResponse(expenseEntryService.delete(id));
     }
 
     @GetMapping
-    public ResponseEntity<MonthlyExpenseListResponse> getByMonth(
+    public ResponseEntity<ApiResponse<MonthlyExpenseListResponse>> getByMonth(
             @RequestParam Integer year,
             @RequestParam Integer month
     ) {
-        return ResponseEntity.ok(expenseEntryService.getByMonth(year, month));
+        return toResponse(expenseEntryService.getByMonth(year, month));
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+        ApiResponse<T> response = result.success()
+                ? ApiResponse.success(result.message(), result.data())
+                : ApiResponse.failure(result.message(), result.errors());
+        return ResponseEntity.status(result.statusCode()).body(response);
     }
 }
 

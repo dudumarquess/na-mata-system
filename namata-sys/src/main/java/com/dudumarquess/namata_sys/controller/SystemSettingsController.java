@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.request.UpdateSystemSettingsRequest;
 import com.dudumarquess.namata_sys.dto.response.SystemSettingsResponse;
 import com.dudumarquess.namata_sys.service.SystemSettingsService;
@@ -22,15 +24,22 @@ public class SystemSettingsController {
     }
 
     @GetMapping
-    public ResponseEntity<SystemSettingsResponse> getSettings() {
-        return ResponseEntity.ok(systemSettingsService.getSettings());
+    public ResponseEntity<ApiResponse<SystemSettingsResponse>> getSettings() {
+        return toResponse(systemSettingsService.getSettings());
     }
 
     @PutMapping
-    public ResponseEntity<SystemSettingsResponse> update(
+    public ResponseEntity<ApiResponse<SystemSettingsResponse>> update(
             @Valid @RequestBody UpdateSystemSettingsRequest request
     ) {
-        return ResponseEntity.ok(systemSettingsService.update(request));
+        return toResponse(systemSettingsService.update(request));
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+        ApiResponse<T> response = result.success()
+                ? ApiResponse.success(result.message(), result.data())
+                : ApiResponse.failure(result.message(), result.errors());
+        return ResponseEntity.status(result.statusCode()).body(response);
     }
 }
 

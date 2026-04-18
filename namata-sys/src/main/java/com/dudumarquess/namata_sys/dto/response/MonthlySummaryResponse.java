@@ -8,10 +8,10 @@ public record MonthlySummaryResponse(
         BigDecimal totalCash,
         BigDecimal totalMultibanco,
         BigDecimal totalAppsGross,
+        BigDecimal totalOtherIncome,
         BigDecimal totalOfficial,
         BigDecimal totalReal,
         BigDecimal totalExpenses,
         BigDecimal balance
 ) {
 }
-

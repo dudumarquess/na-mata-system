@@ -9,9 +9,9 @@ public record DailyRevenueEntryResponse(
         BigDecimal cashAmount,
         BigDecimal multibancoAmount,
         BigDecimal appsGrossAmount,
+        BigDecimal otherIncomeAmount,
         BigDecimal appFeePercentageUsed,
         BigDecimal officialAmount,
         BigDecimal realAmount
 ) {
 }
-

@@ -1,0 +1,29 @@
+.alert {
+  border-radius: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid transparent;
+
+  p {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.4;
+  }
+}
+
+.alert.info {
+  background: #eef6f2;
+  border-color: rgba(22, 63, 51, 0.2);
+  color: #1b4035;
+}
+
+.alert.sucesso {
+  background: #edf8ef;
+  border-color: rgba(51, 147, 76, 0.25);
+  color: #20592f;
+}
+
+.alert.erro {
+  background: #fff1f2;
+  border-color: rgba(201, 63, 86, 0.25);
+  color: #86253a;
+}

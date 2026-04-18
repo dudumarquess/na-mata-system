@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.response.MonthlySummaryResponse;
 import com.dudumarquess.namata_sys.service.MonthlySummaryService;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,18 @@ public class MonthlySummaryController {
     }
 
     @GetMapping
-    public ResponseEntity<MonthlySummaryResponse> getSummary(
+    public ResponseEntity<ApiResponse<MonthlySummaryResponse>> getSummary(
             @RequestParam Integer year,
             @RequestParam Integer month
     ) {
-        return ResponseEntity.ok(monthlySummaryService.getSummary(year, month));
+        return toResponse(monthlySummaryService.getSummary(year, month));
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+        ApiResponse<T> response = result.success()
+                ? ApiResponse.success(result.message(), result.data())
+                : ApiResponse.failure(result.message(), result.errors());
+        return ResponseEntity.status(result.statusCode()).body(response);
     }
 }
 

@@ -1,0 +1,49 @@
+<section class="page-animation dashboard-page">
+  <app-card>
+    <div class="month-title">
+      <h1>{{ monthStore.label() }}</h1>
+      <button type="button" class="btn secondary" (click)="refresh()" [disabled]="loading()">Atualizar</button>
+    </div>
+
+    <p class="month-description">Escolha uma ação. Está tudo organizado para usar com poucos toques.</p>
+  </app-card>
+
+  <section class="quick-actions">
+    @for (action of quickActions; track action.route) {
+      <a class="action-card" [routerLink]="action.route">
+        <strong>{{ action.label }}</strong>
+        <span>{{ action.subtitle }}</span>
+      </a>
+    }
+  </section>
+
+  <app-card title="Resumo rápido">
+    @if (loading()) {
+      <app-loading text="A carregar resumo do mês..."></app-loading>
+    } @else if (error()) {
+      <app-alert type="erro" [text]="error() || ''"></app-alert>
+    } @else if (!summary() || !hasNumbers()) {
+      <app-empty-state
+        title="Ainda sem movimentos"
+        message="Quando registar receitas e gastos, o resumo aparece aqui automaticamente."
+      ></app-empty-state>
+    } @else {
+      <div class="summary-grid">
+        <article>
+          <span>Receita real até agora</span>
+          <strong>{{ summary()?.totalReal ?? 0 | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+        </article>
+
+        <article>
+          <span>Gastos até agora</span>
+          <strong>{{ summary()?.totalExpenses ?? 0 | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+        </article>
+
+        <article [class.negative]="(summary()?.balance ?? 0) < 0">
+          <span>Saldo atual</span>
+          <strong>{{ summary()?.balance ?? 0 | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+        </article>
+      </div>
+    }
+  </app-card>
+</section>

@@ -1,0 +1,90 @@
+<section class="expenses-page page-animation">
+  <app-card title="Registrar gasto" subtitle="Adicione os gastos do mês de forma rápida.">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+      <div class="form-field">
+        <label for="expenseDay">Dia</label>
+        <input id="expenseDay" type="number" inputmode="numeric" min="1" max="31" formControlName="day" />
+        <app-field-errors [control]="form.controls.day" [backendError]="backendFieldErrors()['day']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="expenseDescription">Descrição</label>
+        <input id="expenseDescription" type="text" formControlName="description" maxlength="120" placeholder="Ex.: Compra de frutas" />
+        <app-field-errors
+          [control]="form.controls.description"
+          [backendError]="backendFieldErrors()['description']"
+        ></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="expenseAmount">Valor (€)</label>
+        <input id="expenseAmount" type="number" inputmode="decimal" min="0" step="0.01" formControlName="amount" />
+        <app-field-errors [control]="form.controls.amount" [backendError]="backendFieldErrors()['amount']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="expenseType">Tipo de gasto</label>
+        <select id="expenseType" formControlName="expenseType">
+          <option value="VARIABLE">Variável</option>
+          <option value="FIXED">Fixo</option>
+        </select>
+        <app-field-errors
+          [control]="form.controls.expenseType"
+          [backendError]="backendFieldErrors()['expenseType']"
+        ></app-field-errors>
+      </div>
+
+      @if (generalError()) {
+        <app-alert type="erro" [text]="generalError() || ''"></app-alert>
+      }
+
+      <div class="actions-row">
+        <button type="submit" class="btn primary full" [disabled]="saving()">
+          {{ saving() ? 'A guardar...' : editingId() ? 'Atualizar' : 'Guardar' }}
+        </button>
+        @if (editingId()) {
+          <button type="button" class="btn secondary full" (click)="limpar()">Voltar</button>
+        }
+      </div>
+    </form>
+  </app-card>
+
+  <app-card title="Gastos do mês">
+    @if (loading()) {
+      <app-loading text="A carregar gastos..."></app-loading>
+    } @else if (!sortedEntries().length) {
+      <app-empty-state title="Sem gastos ainda" message="Quando registar um gasto, ele aparece aqui."></app-empty-state>
+    } @else {
+      <section class="entries-list">
+        @for (entry of sortedEntries(); track entry.id) {
+          <article class="entry-item">
+            <div class="entry-main">
+              <p class="entry-day">Dia {{ entry.day }}</p>
+              <p class="entry-description">{{ entry.description }}</p>
+              <p class="entry-meta">{{ expenseTypeLabel(entry.expenseType) }}</p>
+            </div>
+
+            <div class="entry-side">
+              <strong>{{ entry.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+              <div class="item-actions">
+                <button type="button" class="btn secondary" (click)="editar(entry)">Editar</button>
+                <button type="button" class="btn danger" (click)="pedirConfirmacaoEliminar(entry)">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    }
+  </app-card>
+
+  <app-confirm-dialog
+    [open]="!!entryPendingDelete()"
+    title="Eliminar gasto"
+    [message]="'Vai eliminar o gasto: ' + (entryPendingDelete()?.description || '') + '. Esta ação não pode ser anulada.'"
+    confirmLabel="Eliminar"
+    cancelLabel="Voltar"
+    [danger]="true"
+    (confirmed)="confirmarEliminar()"
+    (canceled)="cancelarEliminar()"
+  ></app-confirm-dialog>
+</section>

@@ -13,7 +13,7 @@ public record UpdateDailyRevenueEntryRequest(
         @NotNull @DecimalMin("0.00") BigDecimal cashAmount,
         @NotNull @DecimalMin("0.00") BigDecimal multibancoAmount,
         @NotNull @DecimalMin("0.00") BigDecimal appsGrossAmount,
-        @NotNull @DecimalMin("0.00") @DecimalMax("100.00") BigDecimal appFeePercentageUsed
+        @NotNull @DecimalMin("0.00") BigDecimal otherIncomeAmount,
+        @DecimalMin("0.00") @DecimalMax("100.00") BigDecimal appFeePercentageUsed
 ) {
 }
-

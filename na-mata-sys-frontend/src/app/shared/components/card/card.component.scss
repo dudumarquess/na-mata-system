@@ -1,0 +1,26 @@
+.card {
+  background: var(--surface-color);
+  border-radius: 1rem;
+  box-shadow: var(--soft-shadow);
+  border: 1px solid rgba(22, 63, 51, 0.08);
+}
+
+.card-header {
+  padding: 1rem 1rem 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--muted-text-color);
+    font-size: 0.95rem;
+  }
+}
+
+.card-content {
+  padding: 1rem;
+}

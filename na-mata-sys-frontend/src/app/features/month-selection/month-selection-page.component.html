@@ -1,0 +1,46 @@
+<section class="month-selection-page page-animation">
+  <header class="welcome">
+    <div class="welcome-mark" aria-hidden="true"></div>
+    <h1>Na Mata Sys</h1>
+    <p>Organize o mês da loja com poucos toques.</p>
+  </header>
+
+  <app-card title="Abrir mês" subtitle="Escolha o mês para começar. Tudo o resto fica pronto automaticamente.">
+    <form [formGroup]="form" (ngSubmit)="abrirMes()" class="form-grid">
+      <div class="form-field">
+        <label for="year">Ano</label>
+        <select id="year" formControlName="year">
+          @for (year of years; track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
+        <app-field-errors [control]="form.controls.year" [backendError]="backendFieldErrors()['year']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="month">Mês</label>
+        <select id="month" formControlName="month">
+          @for (month of months; track month.value) {
+            <option [value]="month.value">{{ month.label }}</option>
+          }
+        </select>
+        <app-field-errors [control]="form.controls.month" [backendError]="backendFieldErrors()['month']"></app-field-errors>
+      </div>
+
+      @if (generalError()) {
+        <app-alert type="erro" [text]="generalError() || ''"></app-alert>
+      }
+
+      <button type="submit" class="btn primary full" [disabled]="loading()">
+        {{ loading() ? 'A abrir mês...' : 'Abrir mês' }}
+      </button>
+    </form>
+  </app-card>
+
+  @if (monthStore.hasSelection()) {
+    <app-card title="Mês já selecionado" subtitle="Pode continuar de onde parou.">
+      <p class="current-month">{{ monthStore.label() }}</p>
+      <button type="button" class="btn secondary full" (click)="entrarMesAtual()">Continuar neste mês</button>
+    </app-card>
+  }
+</section>

@@ -68,6 +68,11 @@ public class DailyRevenueEntry extends BaseEntity {
 
     @NotNull
     @DecimalMin(value = "0.00")
+    @Column(name = "other_income_amount", nullable = false, precision = 12, scale = 2)
+    private BigDecimal otherIncomeAmount;
+
+    @NotNull
+    @DecimalMin(value = "0.00")
     @DecimalMax(value = "100.00")
     @Column(name = "app_fee_percentage_used", nullable = false, precision = 5, scale = 2)
     private BigDecimal appFeePercentageUsed;
@@ -126,6 +131,14 @@ public class DailyRevenueEntry extends BaseEntity {
         this.appsGrossAmount = DecimalScaleNormalizer.normalize(appsGrossAmount);
     }
 
+    public BigDecimal getOtherIncomeAmount() {
+        return otherIncomeAmount;
+    }
+
+    public void setOtherIncomeAmount(BigDecimal otherIncomeAmount) {
+        this.otherIncomeAmount = DecimalScaleNormalizer.normalize(otherIncomeAmount);
+    }
+
     public BigDecimal getAppFeePercentageUsed() {
         return appFeePercentageUsed;
     }
@@ -144,7 +157,7 @@ public class DailyRevenueEntry extends BaseEntity {
 
     public void calculateOfficialAmount() {
         this.officialAmount = DecimalScaleNormalizer.normalize(
-                this.cashAmount.add(this.multibancoAmount).add(this.appsGrossAmount)
+                this.cashAmount.add(this.multibancoAmount).add(this.appsGrossAmount).add(this.otherIncomeAmount)
         );
     }
 
@@ -156,4 +169,3 @@ public class DailyRevenueEntry extends BaseEntity {
     }
 
 }
-

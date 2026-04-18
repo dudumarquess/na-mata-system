@@ -1,0 +1,55 @@
+<section class="summary-page page-animation">
+  <app-card>
+    <div class="title-row">
+      <h1>Resumo do mês</h1>
+      <button type="button" class="btn secondary" (click)="atualizar()" [disabled]="loading()">Atualizar</button>
+    </div>
+    <p class="subtitle">{{ monthStore.label() }}</p>
+  </app-card>
+
+  @if (loading()) {
+    <app-loading text="A carregar resumo..."></app-loading>
+  } @else if (error()) {
+    <app-alert type="erro" [text]="error() || ''"></app-alert>
+  } @else if (!summary()) {
+    <app-empty-state
+      title="Sem dados para mostrar"
+      message="Registe receitas e gastos para ver o resumo completo do mês."
+    ></app-empty-state>
+  } @else {
+    <section class="totals-grid">
+      <article>
+        <span>Total em dinheiro</span>
+        <strong>{{ summary()!.totalCash | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total multibanco</span>
+        <strong>{{ summary()!.totalMultibanco | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total apps</span>
+        <strong>{{ summary()!.totalAppsGross | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total outras receitas</span>
+        <strong>{{ summary()!.totalOtherIncome | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total oficial</span>
+        <strong>{{ summary()!.totalOfficial | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total real</span>
+        <strong>{{ summary()!.totalReal | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article>
+        <span>Total gastos</span>
+        <strong>{{ summary()!.totalExpenses | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+      <article class="balance" [class.negative]="summary()!.balance < 0">
+        <span>Saldo</span>
+        <strong>{{ summary()!.balance | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+      </article>
+    </section>
+  }
+</section>

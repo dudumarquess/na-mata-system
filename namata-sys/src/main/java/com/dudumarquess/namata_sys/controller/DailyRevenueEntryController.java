@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.request.CreateDailyRevenueEntryRequest;
 import com.dudumarquess.namata_sys.dto.request.UpdateDailyRevenueEntryRequest;
 import com.dudumarquess.namata_sys.dto.response.DailyRevenueEntryResponse;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/daily-revenues")
 public class DailyRevenueEntryController {
@@ -27,24 +31,55 @@ public class DailyRevenueEntryController {
     }
 
     @PostMapping
-    public ResponseEntity<DailyRevenueEntryResponse> create(@Valid @RequestBody CreateDailyRevenueEntryRequest request) {
-        return ResponseEntity.ok(dailyRevenueEntryService.create(request));
+    public ResponseEntity<ApiResponse<DailyRevenueEntryResponse>> create(@Valid @RequestBody CreateDailyRevenueEntryRequest request) {
+        // Apply default value for appFeePercentageUsed if null
+        if (request.appFeePercentageUsed() == null) {
+            request = new CreateDailyRevenueEntryRequest(
+                    request.year(),
+                    request.month(),
+                    request.day(),
+                    request.cashAmount(),
+                    request.multibancoAmount(),
+                    request.appsGrossAmount(),
+                    request.otherIncomeAmount(),
+                    new BigDecimal("30.00")
+            );
+        }
+        return toResponse(dailyRevenueEntryService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DailyRevenueEntryResponse> update(
+    public ResponseEntity<ApiResponse<DailyRevenueEntryResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateDailyRevenueEntryRequest request
     ) {
-        return ResponseEntity.ok(dailyRevenueEntryService.update(id, request));
+        // Apply default value for appFeePercentageUsed if null
+        UpdateDailyRevenueEntryRequest updatedRequest = request;
+        if (request.appFeePercentageUsed() == null) {
+            updatedRequest = new UpdateDailyRevenueEntryRequest(
+                    request.day(),
+                    request.cashAmount(),
+                    request.multibancoAmount(),
+                    request.appsGrossAmount(),
+                    request.otherIncomeAmount(),
+                    new BigDecimal("30.00")
+            );
+        }
+        return toResponse(dailyRevenueEntryService.update(id, updatedRequest));
     }
 
     @GetMapping
-    public ResponseEntity<MonthlyDailyRevenueListResponse> getByMonth(
+    public ResponseEntity<ApiResponse<MonthlyDailyRevenueListResponse>> getByMonth(
             @RequestParam Integer year,
             @RequestParam Integer month
     ) {
-        return ResponseEntity.ok(dailyRevenueEntryService.getByMonth(year, month));
+        return toResponse(dailyRevenueEntryService.getByMonth(year, month));
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+        ApiResponse<T> response = result.success()
+                ? ApiResponse.success(result.message(), result.data())
+                : ApiResponse.failure(result.message(), result.errors());
+        return ResponseEntity.status(result.statusCode()).body(response);
     }
 }
-

@@ -1,0 +1,14 @@
+@if (open()) {
+  <div class="dialog-backdrop" (click)="canceled.emit()" aria-hidden="true"></div>
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <h3 id="confirm-title">{{ title() }}</h3>
+    <p>{{ message() }}</p>
+
+    <div class="actions">
+      <button type="button" class="btn secondary" (click)="canceled.emit()">{{ cancelLabel() }}</button>
+      <button type="button" class="btn" [class.danger]="danger()" (click)="confirmed.emit()">
+        {{ confirmLabel() }}
+      </button>
+    </div>
+  </section>
+}

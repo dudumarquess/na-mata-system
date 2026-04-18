@@ -1,5 +1,7 @@
 package com.dudumarquess.namata_sys.controller;
 
+import com.dudumarquess.namata_sys.api.ApiResponse;
+import com.dudumarquess.namata_sys.api.ServiceResult;
 import com.dudumarquess.namata_sys.dto.request.OpenMonthlyRecordRequest;
 import com.dudumarquess.namata_sys.dto.response.MonthlyRecordResponse;
 import com.dudumarquess.namata_sys.service.MonthlyRecordService;
@@ -21,8 +23,15 @@ public class MonthlyRecordController {
 	}
 
 	@PostMapping("/open")
-	public ResponseEntity<MonthlyRecordResponse> open(@Valid @RequestBody OpenMonthlyRecordRequest request) {
-		return ResponseEntity.ok(monthlyRecordService.openOrCreateMonth(request));
+	public ResponseEntity<ApiResponse<MonthlyRecordResponse>> open(@Valid @RequestBody OpenMonthlyRecordRequest request) {
+		return toResponse(monthlyRecordService.openOrCreateMonth(request));
+	}
+
+	private <T> ResponseEntity<ApiResponse<T>> toResponse(ServiceResult<T> result) {
+		ApiResponse<T> response = result.success()
+				? ApiResponse.success(result.message(), result.data())
+				: ApiResponse.failure(result.message(), result.errors());
+		return ResponseEntity.status(result.statusCode()).body(response);
 	}
 
 }

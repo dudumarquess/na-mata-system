@@ -1,0 +1,88 @@
+.dashboard-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.month-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+
+  h1 {
+    margin: 0;
+    font-family: var(--display-font);
+    font-size: 1.35rem;
+    color: var(--text-color);
+  }
+}
+
+.month-description {
+  margin: 0.7rem 0 0;
+  color: var(--muted-text-color);
+  font-size: 1rem;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.action-card {
+  display: grid;
+  gap: 0.3rem;
+  text-decoration: none;
+  border-radius: 0.95rem;
+  background: linear-gradient(180deg, #ffffff 0%, #fcf9f2 100%);
+  border: 1px solid rgba(22, 63, 51, 0.08);
+  box-shadow: var(--soft-shadow);
+  padding: 0.95rem 1rem;
+
+  strong {
+    color: var(--text-color);
+    font-size: 1.05rem;
+  }
+
+  span {
+    color: var(--muted-text-color);
+    font-size: 0.9rem;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  gap: 0.8rem;
+
+  article {
+    background: #f4f8f6;
+    border-radius: 0.85rem;
+    padding: 0.8rem;
+    display: grid;
+    gap: 0.3rem;
+
+    span {
+      color: var(--muted-text-color);
+      font-size: 0.9rem;
+    }
+
+    strong {
+      color: var(--text-color);
+      font-size: 1.2rem;
+      font-family: var(--display-font);
+    }
+  }
+
+  article.negative strong {
+    color: #a03d2a;
+  }
+}
+
+@media (min-width: 768px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

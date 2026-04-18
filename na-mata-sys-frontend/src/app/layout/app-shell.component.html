@@ -1,0 +1,28 @@
+<div class="shell">
+  <header class="topbar">
+    <div class="brand-area">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <p class="brand-name">Na Mata Sys</p>
+        <p class="brand-subtitle">Gestão simples do mês</p>
+      </div>
+    </div>
+
+    <a routerLink="/mes" class="month-pill" aria-label="Mudar mês">
+      <span>Mês atual</span>
+      <strong>{{ monthStore.label() }}</strong>
+    </a>
+  </header>
+
+  <main class="content" tabindex="-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    @for (item of navigation; track item.path) {
+      <a routerLink="{{ item.path }}" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+</div>

@@ -1,0 +1,115 @@
+<section class="daily-revenue-page page-animation">
+  <app-card title="Receita do dia" subtitle="Preencha só o essencial. Os cálculos são automáticos.">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+      <div class="form-field">
+        <label for="day">Dia</label>
+        <input id="day" type="number" inputmode="numeric" formControlName="day" min="1" max="31" />
+        <app-field-errors [control]="form.controls.day" [backendError]="backendFieldErrors()['day']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="cashAmount">Dinheiro (€)</label>
+        <input id="cashAmount" type="number" inputmode="decimal" step="0.01" min="0" formControlName="cashAmount" />
+        <app-field-errors [control]="form.controls.cashAmount" [backendError]="backendFieldErrors()['cashAmount']"></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="multibancoAmount">Multibanco (€)</label>
+        <input id="multibancoAmount" type="number" inputmode="decimal" step="0.01" min="0" formControlName="multibancoAmount" />
+        <app-field-errors
+          [control]="form.controls.multibancoAmount"
+          [backendError]="backendFieldErrors()['multibancoAmount']"
+        ></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="appsGrossAmount">Aplicativos (€)</label>
+        <input id="appsGrossAmount" type="number" inputmode="decimal" step="0.01" min="0" formControlName="appsGrossAmount" />
+        <app-field-errors
+          [control]="form.controls.appsGrossAmount"
+          [backendError]="backendFieldErrors()['appsGrossAmount']"
+        ></app-field-errors>
+      </div>
+
+      <div class="form-field">
+        <label for="otherIncomeAmount">Outras receitas (€)</label>
+        <input
+          id="otherIncomeAmount"
+          type="number"
+          inputmode="decimal"
+          step="0.01"
+          min="0"
+          formControlName="otherIncomeAmount"
+        />
+        <app-field-errors
+          [control]="form.controls.otherIncomeAmount"
+          [backendError]="backendFieldErrors()['otherIncomeAmount']"
+        ></app-field-errors>
+      </div>
+
+      <app-card class="preview-card" title="Resumo automático">
+        @if (savedCalculation()) {
+          <div class="preview-row">
+            <span>Último registo guardado (dia {{ savedCalculation()!.day }})</span>
+            <strong>{{ savedCalculation()!.officialAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+          </div>
+          <div class="preview-row">
+            <span>Taxa de apps ({{ savedCalculation()!.appFeePercentageUsed | number: '1.0-2' : 'pt-PT' }}%)</span>
+            <strong>{{ savedCalculation()!.appFeeAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+          </div>
+          <div class="preview-row">
+            <span>Outras receitas</span>
+            <strong>{{ savedCalculation()!.otherIncomeAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+          </div>
+          <div class="preview-row total">
+            <span>Valor real calculado</span>
+            <strong>{{ savedCalculation()!.realAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+          </div>
+        } @else {
+          <p class="preview-empty">Depois de carregar em Guardar, o cálculo automático aparece aqui.</p>
+        }
+      </app-card>
+
+      @if (generalError()) {
+        <app-alert type="erro" [text]="generalError() || ''"></app-alert>
+      }
+
+      <div class="actions-row">
+        <button type="submit" class="btn primary full" [disabled]="saving() || loadingFee()">
+          {{ saving() ? 'A guardar...' : editingEntryId() ? 'Atualizar' : 'Guardar' }}
+        </button>
+        @if (editingEntryId()) {
+          <button type="button" class="btn secondary full" (click)="limparFormulario()">Voltar</button>
+        }
+      </div>
+    </form>
+  </app-card>
+
+  <app-card title="Receitas já registadas">
+    @if (loadingEntries()) {
+      <app-loading text="A carregar receitas..."></app-loading>
+    } @else if (!sortedEntries().length) {
+      <app-empty-state title="Sem receitas ainda" message="Registe a primeira receita do mês aqui em cima."></app-empty-state>
+    } @else {
+      <section class="entries-list">
+        @for (entry of sortedEntries(); track entry.id) {
+          <article class="entry-item">
+            <div>
+              <p class="entry-day">Dia {{ entry.day }}</p>
+              <p>
+                Oficial: <strong>{{ entry.officialAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+              </p>
+              <p>
+                Real: <strong>{{ entry.realAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+              </p>
+              <p>
+                Outras receitas: <strong>{{ entry.otherIncomeAmount | currency: 'EUR' : 'symbol' : '1.2-2' : 'pt-PT' }}</strong>
+              </p>
+            </div>
+            <button type="button" class="btn secondary" (click)="editar(entry)">Editar</button>
+          </article>
+        }
+      </section>
+    }
+  </app-card>
+</section>

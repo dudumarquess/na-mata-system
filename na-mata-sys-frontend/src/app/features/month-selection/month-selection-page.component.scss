@@ -1,0 +1,44 @@
+.month-selection-page {
+  display: grid;
+  gap: 1rem;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.welcome {
+  text-align: center;
+  padding: 1.2rem 0 0.2rem;
+
+  h1 {
+    margin: 0.7rem 0 0;
+    font-size: 2rem;
+    color: var(--brand-green);
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--muted-text-color);
+    font-size: 1.02rem;
+  }
+}
+
+.welcome-mark {
+  margin: 0 auto;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, var(--brand-green), var(--accent-magenta), var(--accent-orange));
+  box-shadow: 0 14px 28px rgba(22, 63, 51, 0.27);
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.current-month {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-color);
+}

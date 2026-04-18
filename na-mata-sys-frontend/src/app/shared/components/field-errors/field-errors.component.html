@@ -1,0 +1,5 @@
+@if (backendError()) {
+  <p class="field-error" role="alert">{{ backendError() }}</p>
+} @else if (localMessage()) {
+  <p class="field-error" role="alert">{{ localMessage() }}</p>
+}
