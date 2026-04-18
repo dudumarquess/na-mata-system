@@ -66,7 +66,7 @@ public class FixedExpenseTemplate extends BaseEntity {
     }
 
     public void setDefaultAmount(BigDecimal defaultAmount) {
-        this.defaultAmount = defaultAmount;
+        this.defaultAmount = DecimalScaleNormalizer.normalize(defaultAmount);
     }
 
     public Integer getDefaultDay() {

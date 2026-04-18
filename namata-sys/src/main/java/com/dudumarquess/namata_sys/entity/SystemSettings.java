@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -39,7 +41,13 @@ public class SystemSettings extends BaseEntity {
     }
 
     public void setDefaultAppFeePercentage(BigDecimal defaultAppFeePercentage) {
-        this.defaultAppFeePercentage = defaultAppFeePercentage;
+        this.defaultAppFeePercentage = DecimalScaleNormalizer.normalize(defaultAppFeePercentage);
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeMonetaryFields() {
+        this.defaultAppFeePercentage = DecimalScaleNormalizer.normalize(this.defaultAppFeePercentage);
     }
 }
 

@@ -1,3 +1,14 @@
 spring:
   application:
     name: namata-sys
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/namata_sys
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

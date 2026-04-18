@@ -108,7 +108,7 @@ public class ExpenseEntry extends BaseEntity {
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+        this.amount = DecimalScaleNormalizer.normalize(amount);
     }
 
     public ExpenseNature getExpenseNature() {

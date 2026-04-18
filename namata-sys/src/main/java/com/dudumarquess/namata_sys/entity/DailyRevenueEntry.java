@@ -18,6 +18,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Table(
@@ -85,10 +86,6 @@ public class DailyRevenueEntry extends BaseEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public MonthlyRecord getMonthlyRecord() {
         return monthlyRecord;
     }
@@ -110,7 +107,7 @@ public class DailyRevenueEntry extends BaseEntity {
     }
 
     public void setCashAmount(BigDecimal cashAmount) {
-        this.cashAmount = cashAmount;
+        this.cashAmount = DecimalScaleNormalizer.normalize(cashAmount);
     }
 
     public BigDecimal getMultibancoAmount() {
@@ -118,7 +115,7 @@ public class DailyRevenueEntry extends BaseEntity {
     }
 
     public void setMultibancoAmount(BigDecimal multibancoAmount) {
-        this.multibancoAmount = multibancoAmount;
+        this.multibancoAmount = DecimalScaleNormalizer.normalize(multibancoAmount);
     }
 
     public BigDecimal getAppsGrossAmount() {
@@ -126,7 +123,7 @@ public class DailyRevenueEntry extends BaseEntity {
     }
 
     public void setAppsGrossAmount(BigDecimal appsGrossAmount) {
-        this.appsGrossAmount = appsGrossAmount;
+        this.appsGrossAmount = DecimalScaleNormalizer.normalize(appsGrossAmount);
     }
 
     public BigDecimal getAppFeePercentageUsed() {
@@ -134,23 +131,29 @@ public class DailyRevenueEntry extends BaseEntity {
     }
 
     public void setAppFeePercentageUsed(BigDecimal appFeePercentageUsed) {
-        this.appFeePercentageUsed = appFeePercentageUsed;
+        this.appFeePercentageUsed = DecimalScaleNormalizer.normalize(appFeePercentageUsed);
     }
 
     public BigDecimal getOfficialAmount() {
         return officialAmount;
     }
 
-    public void setOfficialAmount(BigDecimal officialAmount) {
-        this.officialAmount = officialAmount;
-    }
-
     public BigDecimal getRealAmount() {
         return realAmount;
     }
 
-    public void setRealAmount(BigDecimal realAmount) {
-        this.realAmount = realAmount;
+    public void calculateOfficialAmount() {
+        this.officialAmount = DecimalScaleNormalizer.normalize(
+                this.cashAmount.add(this.multibancoAmount).add(this.appsGrossAmount)
+        );
     }
+
+    public void calculateRealAmount() {
+        BigDecimal appFee = DecimalScaleNormalizer.normalize(
+                this.appsGrossAmount.multiply(this.appFeePercentageUsed).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
+        );
+        this.realAmount = DecimalScaleNormalizer.normalize(this.officialAmount.subtract(appFee));
+    }
+
 }
 
