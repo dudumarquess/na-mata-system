@@ -10,12 +10,12 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record CreateExpenseEntryRequest(
-        @NotNull @Min(1) Integer year,
-        @NotNull @Min(1) @Max(12) Integer month,
-        @NotNull @Min(1) @Max(31) Integer day,
-        @NotBlank String description,
-        @NotNull @DecimalMin("0.00") BigDecimal amount,
-        @NotNull ExpenseNature expenseType,
+        Integer year,
+        Integer month,
+        Integer day,
+        String description,
+        BigDecimal amount,
+        ExpenseNature expenseType,
         Long fixedExpenseTemplateId
 ) {
 }
